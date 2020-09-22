@@ -25,13 +25,13 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.apache.avro.InvalidAvroMagicException;
 import org.apache.avro.file.SeekableInput;
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.iceberg.common.DynClasses;
 import org.apache.iceberg.common.DynConstructors;
 import org.apache.iceberg.exceptions.RuntimeIOException;
+import org.apache.iceberg.exceptions.ValidationException;
 import org.apache.iceberg.io.DelegatingInputStream;
 import org.apache.iceberg.io.SeekableInputStream;
 
@@ -162,7 +162,7 @@ class AvroIO {
       // it is necessary to read the header here because this is the only way to get the expected file sync bytes
       byte[] magic = MAGIC_READER.read(decoder, null);
       if (!Arrays.equals(AVRO_MAGIC, magic)) {
-        throw new InvalidAvroMagicException("Not an Avro file");
+        throw new ValidationException("Not an Avro file");
       }
 
       META_READER.read(decoder, null); // ignore the file metadata, it isn't needed
